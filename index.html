@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invite Manager</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Nunito:wght@400;500;600;700;800&display=swap");
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Nunito",sans-serif;background:#f4f0e8;min-height:100vh;color:#3d2e1a}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,#4a7c59 0%,#5a9e6a 35%,#7db87a 65%,#a8c878 100%);padding:52px 24px 44px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(255,255,255,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,255,255,0.06) 0%,transparent 40%);pointer-events:none}
+.leaf1,.leaf2,.leaf3,.leaf4{position:absolute;font-size:2.5rem;opacity:0.18;pointer-events:none;user-select:none}
+.leaf1{top:10px;left:5%}
+.leaf2{top:20px;right:8%;font-size:2rem}
+.leaf3{bottom:10px;left:12%;font-size:1.8rem}
+.leaf4{bottom:8px;right:6%;font-size:2.2rem}
+.hero-eyebrow{font-size:0.72rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.75);margin-bottom:10px}
+.hero h1{font-family:"Playfair Display",serif;font-size:3rem;font-weight:700;color:#fff;letter-spacing:1px;line-height:1.1;text-shadow:0 2px 20px rgba(0,0,0,0.15)}
+.hero-sub{font-family:"Playfair Display",serif;font-size:1.05rem;font-style:italic;color:rgba(255,255,255,0.82);margin-top:8px}
+.hero-dots{display:flex;gap:6px;justify-content:center;margin-top:18px}
+.hero-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4)}
+.hero-dots span:nth-child(2){background:rgba(255,255,255,0.8);width:20px;border-radius:3px}
+
+/* MAIN */
+.main{max-width:720px;margin:0 auto;padding:32px 20px}
+
+/* CARDS */
+.card{background:#fff;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 16px rgba(74,124,89,0.1);border:1px solid #e8e0d0}
+
+/* SECTION LABELS */
+.slabel{font-size:0.68rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#7db87a;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.slabel::after{content:"";flex:1;height:2px;background:linear-gradient(to right,#c8e6b8,transparent);border-radius:1px}
+
+/* UPLOAD */
+input[type="file"]{display:none}
+.upload-box{border:2px dashed #b8d8a8;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;background:linear-gradient(135deg,#f8fdf4,#f0f8e8);transition:all 0.25s}
+.upload-box:hover{border-color:#5a9e6a;background:linear-gradient(135deg,#f0f8e8,#e4f4d4);transform:translateY(-1px)}
+.uicon{font-size:2.2rem;margin-bottom:8px;display:block}
+.utext{font-size:0.9rem;color:#4a7c59;font-weight:700}
+.usub{font-size:0.75rem;color:#a0b890;margin-top:4px}
+.fname{font-size:0.75rem;color:#5a9e6a;margin-top:10px;text-align:center;font-weight:700}
+
+/* TEXTAREA */
+textarea{width:100%;padding:14px;border:2px solid #d8ecc8;border-radius:10px;font-size:0.85rem;font-family:"Nunito",sans-serif;resize:vertical;outline:none;color:#3d2e1a;background:#fafdf6;transition:all 0.2s;line-height:1.6}
+textarea:focus{border-color:#5a9e6a;box-shadow:0 0 0 3px rgba(90,158,106,0.12);background:#fff}
+textarea::placeholder{color:#b8d0a8}
+
+/* INPUTS */
+.input-row{display:flex;gap:8px;flex-wrap:wrap}
+.inp{flex:1;min-width:130px;padding:11px 14px;border:2px solid #d8ecc8;border-radius:10px;font-size:0.88rem;font-family:"Nunito",sans-serif;outline:none;color:#3d2e1a;background:#fafdf6;transition:all 0.2s;font-weight:600}
+.inp:focus{border-color:#5a9e6a;box-shadow:0 0 0 3px rgba(90,158,106,0.12);background:#fff}
+.inp::placeholder{color:#b8d0a8}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:10px;cursor:pointer;font-family:"Nunito",sans-serif;font-weight:800;font-size:0.82rem;padding:11px 22px;letter-spacing:0.06em;transition:all 0.2s;white-space:nowrap}
+.btn-green{background:linear-gradient(135deg,#4a7c59,#6aaa70);color:#fff;box-shadow:0 3px 14px rgba(74,124,89,0.3)}
+.btn-green:hover{background:linear-gradient(135deg,#3d6b4a,#5a9e6a);box-shadow:0 5px 20px rgba(74,124,89,0.4);transform:translateY(-1px)}
+.btn-outline{background:#fff;color:#5a9e6a;border:2px solid #c8e6b8;font-weight:700}
+.btn-outline:hover{border-color:#5a9e6a;background:#f0f8e8}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:10px;margin:4px 0 22px}
+.divider::before,.divider::after{content:"";flex:1;height:2px;background:linear-gradient(to right,transparent,#d8ecc8)}
+.divider::after{background:linear-gradient(to left,transparent,#d8ecc8)}
+.divider span{font-size:0.65rem;color:#a0b890;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;white-space:nowrap}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:22px}
+.stat{background:#fff;border-radius:12px;padding:14px 6px;text-align:center;cursor:pointer;border:2px solid #e8f0dc;transition:all 0.2s;box-shadow:0 2px 8px rgba(74,124,89,0.07)}
+.stat:hover{border-color:#7db87a;transform:translateY(-2px);box-shadow:0 6px 16px rgba(74,124,89,0.15)}
+.stat.active{border-color:transparent;transform:translateY(-2px);box-shadow:0 6px 18px rgba(74,124,89,0.25)}
+.stat[id="sb-all"].active{background:linear-gradient(135deg,#4a7c59,#7db87a)}
+.stat[id="sb-pending"].active{background:linear-gradient(135deg,#d4a843,#e8c860)}
+.stat[id="sb-full"].active{background:linear-gradient(135deg,#e07830,#f0a050)}
+.stat[id="sb-shadi"].active{background:linear-gradient(135deg,#c0506a,#e07888)}
+.stat[id="sb-reception"].active{background:linear-gradient(135deg,#3a8ab0,#50aacc)}
+.stat[id="sb-declined"].active{background:linear-gradient(135deg,#888,#aaa)}
+.stat.active .snum,.stat.active .slbl2{color:#fff}
+.snum{font-family:"Playfair Display",serif;font-size:1.6rem;font-weight:700;color:#4a7c59;line-height:1}
+.slbl2{font-size:0.58rem;color:#a0b890;margin-top:4px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700}
+
+/* PILLS */
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.pill{padding:7px 16px;border-radius:20px;border:2px solid #d8ecc8;background:#fff;cursor:pointer;font-size:0.72rem;font-weight:800;color:#7da870;letter-spacing:0.06em;text-transform:uppercase;font-family:"Nunito",sans-serif;transition:all 0.2s}
+.pill:hover{border-color:#5a9e6a;color:#4a7c59;background:#f4faf0}
+.pill[data-f="all"].active{background:linear-gradient(135deg,#4a7c59,#7db87a);color:#fff;border-color:transparent}
+.pill[data-f="pending"].active{background:linear-gradient(135deg,#d4a843,#e8c860);color:#fff;border-color:transparent}
+.pill[data-f="full"].active{background:linear-gradient(135deg,#e07830,#f0a050);color:#fff;border-color:transparent}
+.pill[data-f="shadi"].active{background:linear-gradient(135deg,#c0506a,#e07888);color:#fff;border-color:transparent}
+.pill[data-f="reception"].active{background:linear-gradient(135deg,#3a8ab0,#50aacc);color:#fff;border-color:transparent}
+.pill[data-f="declined"].active{background:linear-gradient(135deg,#888,#aaa);color:#fff;border-color:transparent}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.search{flex:1;padding:11px 16px;border:2px solid #d8ecc8;border-radius:10px;font-size:0.9rem;font-family:"Nunito",sans-serif;outline:none;background:#fafdf6;color:#3d2e1a;font-weight:600;transition:all 0.2s}
+.search:focus{border-color:#5a9e6a;box-shadow:0 0 0 3px rgba(90,158,106,0.12);background:#fff}
+.search::placeholder{color:#b8d0a8}
+
+/* COUNT BAR */
+.count-bar{display:flex;justify-content:space-between;margin-bottom:12px;padding:0 4px}
+.count-text{font-size:0.75rem;color:#a0b890;font-weight:700}
+.count-text span{color:#5a9e6a}
+
+/* GUEST LIST */
+.guest-list{display:flex;flex-direction:column;gap:8px}
+
+/* GUEST CARD */
+.guest-card{background:#fff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;border:2px solid #eef4e8;box-shadow:0 2px 10px rgba(74,124,89,0.06);transition:all 0.22s}
+.guest-card:hover{border-color:#b8d8a8;box-shadow:0 6px 20px rgba(74,124,89,0.13);transform:translateY(-1px)}
+.guest-card.full{border-left:4px solid #e07830;background:linear-gradient(to right,#fff8f2,#fff)}
+.guest-card.shadi{border-left:4px solid #c0506a;background:linear-gradient(to right,#fff2f4,#fff)}
+.guest-card.reception{border-left:4px solid #3a8ab0;background:linear-gradient(to right,#f2f8ff,#fff)}
+.guest-card.declined{border-left:4px solid #bbb;background:linear-gradient(to right,#f8f8f8,#fff);opacity:0.65}
+
+/* AVATAR */
+.avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.88rem;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+
+/* GUEST INFO */
+.ginfo{flex:1;min-width:0}
+.gname{font-weight:800;font-size:0.92rem;color:#2d3e1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gsource{font-size:0.7rem;color:#a0b890;margin-top:2px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+
+/* STATUS BADGE */
+.stbadge{font-size:0.62rem;font-weight:800;padding:4px 10px;border-radius:20px;flex-shrink:0;white-space:nowrap;letter-spacing:0.06em;text-transform:uppercase}
+.stb-pending{background:#fef9ec;color:#b8902a;border:1.5px solid #f0d888}
+.stb-full{background:#fff3ec;color:#c05820;border:1.5px solid #f0b888}
+.stb-shadi{background:#fff0f3;color:#a03050;border:1.5px solid #f0a0b0}
+.stb-reception{background:#eef6ff;color:#2060a0;border:1.5px solid #90c0e8}
+.stb-declined{background:#f4f4f4;color:#888;border:1.5px solid #ccc}
+
+/* ACTION BUTTONS */
+.card-actions{display:flex;gap:4px;flex-shrink:0}
+.ca{border:2px solid #d8ecc8;background:#f8fdf4;border-radius:8px;cursor:pointer;font-size:0.65rem;font-weight:800;padding:6px 9px;color:#7da870;font-family:"Nunito",sans-serif;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.18s;white-space:nowrap}
+.ca:hover{border-color:#5a9e6a;color:#4a7c59;background:#eaf6e0}
+.ca[data-status="full"].on{background:linear-gradient(135deg,#e07830,#f0a050);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(224,120,48,0.3)}
+.ca[data-status="shadi"].on{background:linear-gradient(135deg,#c0506a,#e07888);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(192,80,106,0.3)}
+.ca[data-status="reception"].on{background:linear-gradient(135deg,#3a8ab0,#50aacc);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(58,138,176,0.3)}
+.ca[data-status="declined"].on{background:linear-gradient(135deg,#888,#aaa);color:#fff;border-color:transparent}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;background:#fff;border-radius:16px;border:2px dashed #d8ecc8}
+.empty-icon{font-size:3rem;margin-bottom:12px}
+.empty-title{font-family:"Playfair Display",serif;font-size:1.4rem;color:#4a7c59;margin-bottom:6px}
+.empty p{font-size:0.8rem;color:#b8d0a8;font-weight:600;letter-spacing:0.06em}
+
+/* FOOTER */
+.footer{text-align:center;padding:28px 20px;margin-top:8px}
+.footer p{font-size:0.68rem;color:#b8d0a8;font-weight:700;letter-spacing:0.15em;text-transform:uppercase}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#4a7c59,#6aaa70);color:#fff;padding:12px 26px;border-radius:20px;font-size:0.78rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;opacity:0;transition:opacity 0.25s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 6px 24px rgba(74,124,89,0.4)}
+.toast.show{opacity:1}
+
+@media(max-width:520px){.stats-grid{grid-template-columns:repeat(3,1fr)}.card-actions{flex-wrap:wrap}.hero h1{font-size:2.2rem}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="leaf1">&#127807;</span><span class="leaf2">&#127808;</span><span class="leaf3">&#127809;</span><span class="leaf4">&#127807;</span>
+  <div class="hero-eyebrow">&#127807; Your Special Day &#127807;</div>
+  <h1>Invite Manager</h1>
+  <div class="hero-sub">Curate your guest list with joy</div>
+  <div class="hero-dots"><span></span><span></span><span></span></div>
+</div>
+
+<div class="main">
+
+<div class="card">
+  <div class="slabel">&#127807; Upload CSV</div>
+  <label for="csvFile">
+    <div class="upload-box">
+      <span class="uicon">&#128194;</span>
+      <div class="utext">Click to upload your CSV file</div>
+      <div class="usub">Columns: name, source &mdash; source is optional</div>
+    </div>
+  </label>
+  <input type="file" id="csvFile">
+  <div class="fname" id="fname"></div>
+</div>
+
+<div class="card">
+  <div class="slabel">&#127795; Paste CSV Text</div>
+  <textarea id="csvPaste" rows="4" placeholder="name,source&#10;Aisha Khan,Instagram&#10;Rahul Mehta,Family&#10;Priya Sharma,Work"></textarea>
+  <button class="btn btn-green" id="btnPaste" style="margin-top:12px">&#9654; Load Names</button>
+</div>
+
+<div class="divider"><span>&#127808; or add one by one &#127808;</span></div>
+
+<div class="card">
+  <div class="slabel">&#127803; Add Manually</div>
+  <div class="input-row">
+    <input type="text" class="inp" id="manualName" placeholder="Full Name"/>
+    <input type="text" class="inp" id="manualSource" placeholder="Source (Family, Work...)"/>
+    <button class="btn btn-green" id="btnAdd">&#43; Add</button>
+  </div>
+</div>
+
+<div class="divider"><span>&#127807; guest list &#127807;</span></div>
+
+<div class="stats-grid">
+  <div class="stat active" id="sb-all">       <div class="snum" id="sAll">0</div>  <div class="slbl2">Total</div></div>
+  <div class="stat" id="sb-pending">           <div class="snum" id="sPend">0</div> <div class="slbl2">Pending</div></div>
+  <div class="stat" id="sb-full">              <div class="snum" id="sFull">0</div> <div class="slbl2">Full</div></div>
+  <div class="stat" id="sb-shadi">             <div class="snum" id="sShadi">0</div><div class="slbl2">Shadi</div></div>
+  <div class="stat" id="sb-reception">         <div class="snum" id="sRecep">0</div><div class="slbl2">Reception</div></div>
+  <div class="stat" id="sb-declined">          <div class="snum" id="sDecl">0</div> <div class="slbl2">Declined</div></div>
+</div>
+
+<div class="pills">
+  <button class="pill active" data-f="all">&#127807; All</button>
+  <button class="pill" data-f="pending">&#9203; Pending</button>
+  <button class="pill" data-f="full">&#11088; Full Invite</button>
+  <button class="pill" data-f="shadi">&#128141; Shadi</button>
+  <button class="pill" data-f="reception">&#127942; Reception</button>
+  <button class="pill" data-f="declined">&#10005; Declined</button>
+</div>
+
+<div class="toolbar">
+  <input type="text" class="search" id="searchInput" placeholder="&#128269;  Search by name..."/>
+  <button class="btn btn-outline" id="btnReset">&#8635; Reset</button>
+  <button class="btn btn-green" id="btnExport">&#11015; Export</button>
+</div>
+
+<div class="count-bar">
+  <div class="count-text">Showing <span id="countShowing">0</span> of <span id="countTotal">0</span> guests</div>
+  <div class="count-text" id="countPending"></div>
+</div>
+
+<div class="guest-list" id="guestList">
+  <div class="empty">
+    <div class="empty-icon">&#127807;</div>
+    <div class="empty-title">No Guests Yet</div>
+    <p>Upload a CSV or paste names above to begin</p>
+  </div>
+</div>
+
+</div>
+<div class="footer"><p>&#127807; &nbsp; Made with love for your special day &nbsp; &#127807;</p></div>
+<div class="toast" id="toast"></div>
+<script>
+
+var guests = [];
+var filter = 'all';
+var COLORS = ['#4a7c59','#7db87a','#c0506a','#3a8ab0','#d4a843','#e07830','#6aaa70','#5a9e6a'];
+
+function getColor(n){var h=0;for(var i=0;i<n.length;i++)h=n.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length];}
+function initials(n){return n.trim().split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(function(){t.className='toast';},2500);}
+
+function parseCSV(text) {
+  var lines = text.split('\n');
+  var rows = [];
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i].replace(/\r/g,'').trim();
+    if (l) rows.push(l);
+  }
+  if (rows.length === 0) { toast('Nothing to load!'); return; }
+  var first = rows[0].toLowerCase();
+  var start = (first.indexOf('name') > -1 || first.indexOf('username') > -1) ? 1 : 0;
+  var added = 0;
+  for (var j = start; j < rows.length; j++) {
+    var parts = rows[j].split(',');
+    var name = parts[0].replace(/^"|"$/g,'').trim();
+    var source = parts[1] ? parts[1].replace(/^"|"$/g,'').trim() : 'Instagram';
+    if (!name) continue;
+    var dup = false;
+    for (var k = 0; k < guests.length; k++) { if (guests[k].name.toLowerCase()===name.toLowerCase()){dup=true;break;} }
+    if (!dup) { guests.push({name:name, source:source, status:'pending'}); added++; }
+  }
+  toast(added + ' names added!');
+  render(); updateStats();
+}
+
+document.getElementById('csvFile').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('fname').textContent = '&#127807; ' + file.name + ' loaded!';
+  var reader = new FileReader();
+  reader.onload = function(ev) { parseCSV(ev.target.result); };
+  reader.readAsText(file);
+});
+
+document.getElementById('btnPaste').addEventListener('click', function() {
+  var text = document.getElementById('csvPaste').value;
+  if (!text.trim()) { toast('Paste something first!'); return; }
+  parseCSV(text);
+  document.getElementById('csvPaste').value = '';
+});
+
+document.getElementById('btnAdd').addEventListener('click', function() {
+  var name = document.getElementById('manualName').value.trim();
+  var source = document.getElementById('manualSource').value.trim() || 'Manual';
+  if (!name) { toast('Enter a name first!'); return; }
+  var dup = false;
+  for (var k = 0; k < guests.length; k++) { if (guests[k].name.toLowerCase()===name.toLowerCase()){dup=true;break;} }
+  if (dup) { toast('Already in the list!'); return; }
+  guests.unshift({name:name, source:source, status:'pending'});
+  document.getElementById('manualName').value = '';
+  document.getElementById('manualSource').value = '';
+  toast(name + ' added!');
+  render(); updateStats();
+});
+
+document.getElementById('manualName').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('btnAdd').click(); });
+
+document.getElementById('btnReset').addEventListener('click', function() {
+  if (!guests.length) { toast('No guests yet!'); return; }
+  for (var i=0;i<guests.length;i++) guests[i].status='pending';
+  render(); updateStats(); toast('All reset!');
+});
+
+document.getElementById('btnExport').addEventListener('click', function() {
+  if (!guests.length) { toast('No guests yet!'); return; }
+  var map = {full:'Full Invite',shadi:'Shadi Only',reception:'Reception Only',declined:'Not Invited',pending:'Pending'};
+  var rows = ['Name,Source,Invite Status'];
+  for (var i=0;i<guests.length;i++) rows.push('"'+guests[i].name+'","'+guests[i].source+'","'+map[guests[i].status]+'"');
+  var blob = new Blob([rows.join('\n')],{type:'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download='invite_list.csv'; a.click();
+  toast('Exported!');
+});
+
+document.getElementById('searchInput').addEventListener('input', render);
+
+document.querySelectorAll('.pill').forEach(function(pill) {
+  pill.addEventListener('click', function() {
+    filter = this.getAttribute('data-f');
+    document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    document.querySelectorAll('.stat').forEach(function(s){s.classList.remove('active');});
+    var sb = document.getElementById('sb-'+filter);
+    if(sb) sb.classList.add('active');
+    render();
+  });
+});
+
+document.querySelectorAll('.stat').forEach(function(box) {
+  box.addEventListener('click', function() {
+    filter = this.id.replace('sb-','');
+    document.querySelectorAll('.stat').forEach(function(s){s.classList.remove('active');});
+    this.classList.add('active');
+    document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active');});
+    var pill = document.querySelector('.pill[data-f="'+filter+'"]');
+    if(pill) pill.classList.add('active');
+    render();
+  });
+});
+
+function updateStats() {
+  var c = {pending:0,full:0,shadi:0,reception:0,declined:0};
+  for (var i=0;i<guests.length;i++) c[guests[i].status]++;
+  document.getElementById('sAll').textContent   = guests.length;
+  document.getElementById('sPend').textContent  = c.pending;
+  document.getElementById('sFull').textContent  = c.full;
+  document.getElementById('sShadi').textContent = c.shadi;
+  document.getElementById('sRecep').textContent = c.reception;
+  document.getElementById('sDecl').textContent  = c.declined;
+  var p = document.getElementById('countPending');
+  if(p) p.textContent = c.pending > 0 ? c.pending + ' still pending' : (guests.length > 0 ? 'All decided!' : '');
+}
+
+function setStatus(idx, status) {
+  var g = guests.splice(idx,1)[0];
+  g.status = status;
+  guests.push(g);
+  render(); updateStats();
+}
+
+function render() {
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  var pending = [], decided = [];
+  for (var i=0;i<guests.length;i++) {
+    var g = guests[i];
+    if (q && g.name.toLowerCase().indexOf(q)===-1) continue;
+    if (filter !== 'all' && g.status !== filter) continue;
+    if (g.status==='pending') pending.push(i);
+    else decided.push(i);
+  }
+  var idxList = pending.concat(decided);
+  var cs = document.getElementById('countShowing');
+  var ct = document.getElementById('countTotal');
+  if(cs) cs.textContent = idxList.length;
+  if(ct) ct.textContent = guests.length;
+
+  var el = document.getElementById('guestList');
+  if (idxList.length===0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">&#127807;</div><div class="empty-title">'+(guests.length===0?'No Guests Yet':'No Results')+'</div><p>'+(guests.length===0?'Upload a CSV or paste names above to begin':'No names match this filter')+'</p></div>';
+    return;
+  }
+  var stmap = {
+    pending:'<span class="stbadge stb-pending">Pending</span>',
+    full:'<span class="stbadge stb-full">Full Invite</span>',
+    shadi:'<span class="stbadge stb-shadi">Shadi</span>',
+    reception:'<span class="stbadge stb-reception">Reception</span>',
+    declined:'<span class="stbadge stb-declined">Declined</span>'
+  };
+  var h = '';
+  for (var x=0;x<idxList.length;x++) {
+    var i = idxList[x];
+    var g = guests[i];
+    var s = g.status;
+    h += '<div class="guest-card '+s+'">';
+    h += '<div class="avatar" style="background:'+getColor(g.name)+'">'+initials(g.name)+'</div>';
+    h += '<div class="ginfo"><div class="gname">'+g.name+'</div><div class="gsource">'+g.source+'</div></div>';
+    h += stmap[s]||'';
+    h += '<div class="card-actions">';
+    h += '<button class="ca'+(s==='full'?' on':'')+'" data-idx="'+i+'" data-status="full">Full</button>';
+    h += '<button class="ca'+(s==='shadi'?' on':'')+'" data-idx="'+i+'" data-status="shadi">Shadi</button>';
+    h += '<button class="ca'+(s==='reception'?' on':'')+'" data-idx="'+i+'" data-status="reception">Recep.</button>';
+    h += '<button class="ca'+(s==='declined'?' on':'')+'" data-idx="'+i+'" data-status="declined">&#10005;</button>';
+    h += '</div></div>';
+  }
+  el.innerHTML = h;
+  el.querySelectorAll('.ca').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setStatus(parseInt(this.getAttribute('data-idx')), this.getAttribute('data-status'));
+    });
+  });
+}
+
+</script>
+</body>
+</html>
